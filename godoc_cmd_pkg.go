@@ -159,7 +159,7 @@ OPTIONS
     	suffix "s" for seconds, "m" for minutes, "h" for hours, e.g., 15m
     	for 15 minutes (default: 0s, no timeout)
 
-    -leave-parts-on-errora
+    -leave-parts-on-error
 
     	Optionally do not abort failed uploads, leaving parts on the server
     	for manual recovery.
