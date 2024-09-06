@@ -69,14 +69,14 @@ OPTIONS
 
 		Optionally specify the number of concurrent objects to upload
 
-		(default: 1).
+		(default: 1)
 
 	-concurrent-parts int
 
 		Optionally specify the number of concurrent parts to upload per
 		object.
 
-		(default: 1).
+		(default: 1)
 
 	-manifest value
 
@@ -115,7 +115,7 @@ OPTIONS
 		Optionally specify the checksum algorithm to use, one of
 		SHA256, SHA1, CRC32, or CRC32C.
 
-		(default: SHA256).
+		(default: SHA256)
 
 	-disable-path-style
 
@@ -133,7 +133,7 @@ OPTIONS
 		Optionally limit the number of parts to upload in a multi-part
 		object.
 
-		(default: 10000).
+		(default: 10000)
 
 	-use-temp-dir string
 
@@ -150,7 +150,7 @@ OPTIONS
 		Optionally specify the buffer size used to copy chunks
 		in-between readers and writers during processing.
 
-		(default: 256KiB).
+		(default: 256KiB)
 
 	-upload-part-timeout duration
 
@@ -158,7 +158,7 @@ OPTIONS
 		suffix "s" for seconds, "m" for minutes, "h" for hours, e.g.,
 		15m for 15 minutes.
 
-		(default: 0s, no timeout).
+		(default: 0s, no timeout)
 
 	-complete-multipart-timeout duration
 
