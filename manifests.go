@@ -78,22 +78,25 @@ func (p *ManifestType) Set(s string) error {
 // writing the results to the provided io.Writer.
 func Manifest(t manifestType, w io.Writer) *manifestGenerator {
 	return &manifestGenerator{
-		w: w,
-		t: t,
-		n: 0,
+		w:    w,
+		t:    t,
+		nrec: 0,
 	}
 }
 
 type manifestGenerator struct {
-	w io.Writer
-	t manifestType
-	n int
+	w    io.Writer
+	t    manifestType
+	nrec int
 }
 
 // End writes trailing text to its io.Writer to indicate the end of the
 // manifest, e.g., with JSON it writes the closing brace for a JSON array.
 func (p *manifestGenerator) End() error {
 	if p.t == NoManifest {
+		return nil
+	}
+	if p.nrec == 0 {
 		return nil
 	}
 
@@ -112,7 +115,7 @@ func (p *manifestGenerator) End() error {
 // Write writes another record for the manifest.
 func (p *manifestGenerator) Write(obj *ObjectReporting) error {
 	// increment record counter
-	p.n += 1
+	p.nrec += 1
 
 	// write the formatted record to p.w
 	switch p.t {
@@ -124,7 +127,7 @@ func (p *manifestGenerator) Write(obj *ObjectReporting) error {
 			return err
 		}
 
-		if p.n == 1 {
+		if p.nrec == 1 {
 			// start of JSON array
 			if _, err := io.WriteString(p.w, "[\n  "); err != nil {
 				return err
@@ -178,7 +181,7 @@ func (p *manifestGenerator) Write(obj *ObjectReporting) error {
 			return fmt.Errorf("error processing %v: unable to extract field value", p.t)
 		}
 
-		if p.n > 1 {
+		if p.nrec > 1 {
 			// end of prior record in text manifest
 			if _, err := io.WriteString(p.w, "\n"); err != nil {
 				return err

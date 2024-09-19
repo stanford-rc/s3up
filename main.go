@@ -120,7 +120,7 @@ func main() {
 		if opts.Verbose {
 			GiB := float64(1024 * 1024 * 1024)
 
-			log.Printf("%d completed, %d failed, %s bytes in %s (%.3f GiB/s)",
+			log.Printf("%d completed, %d failed, %s in %s (%.3f GiB/s)",
 				ncompleted,
 				naborted,
 				ByteSize(nbytes),
