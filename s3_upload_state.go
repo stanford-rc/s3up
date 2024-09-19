@@ -4,6 +4,7 @@ import (
 	"cmp"
 	"fmt"
 	"slices"
+	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -33,6 +34,8 @@ type S3UploadState struct {
 
 	objectAttributesOutput *s3.GetObjectAttributesOutput
 	objectAttributesError  error
+
+	mu *sync.Mutex
 }
 
 func (p *S3UploadState) Errors() []error {
@@ -69,6 +72,9 @@ func (p *S3UploadState) Errors() []error {
 // before the the part could be passed off to the s3.Client (e.g., if the
 // context was canceled)
 func (p *S3UploadState) setPartResults(partID *int32, out *s3.UploadPartOutput, err error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	p.uploadPartOutputs[*partID] = out
 	p.uploadPartErrors[*partID] = err
 }
@@ -77,6 +83,9 @@ func (p *S3UploadState) setPartResults(partID *int32, out *s3.UploadPartOutput, 
 // completed to this point.  If there is a gap in the sequence of part numbers
 // an error is returned.
 func (p *S3UploadState) completeParts() (*s3.CompleteMultipartUploadInput, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	var completedParts []types.CompletedPart
 
 	for partID, out := range p.uploadPartOutputs {

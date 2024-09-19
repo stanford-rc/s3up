@@ -78,6 +78,8 @@ func NewS3UploadParts(
 
 			uploadPartOutputs: make(map[int32]*s3.UploadPartOutput),
 			uploadPartErrors:  make(map[int32]error),
+
+			mu: &sync.Mutex{},
 		},
 
 		ctx:    ctx,
@@ -241,6 +243,16 @@ func (p *S3UploadParts) uploadPart(part *s3.UploadPartInput) error {
 	}
 
 	out, err := s3client.UploadPart(p.ctx, part)
+
+	if p.opts.Verbose {
+		outcome := "completed"
+		if err != nil {
+			outcome = "failed"
+		}
+
+		log.Printf("%s upload of %s/%s part %d using UploadId %s",
+			outcome, *part.Bucket, *part.Key, *part.PartNumber, *part.UploadId)
+	}
 
 	p.st.setPartResults(part.PartNumber, out, err)
 

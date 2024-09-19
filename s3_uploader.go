@@ -432,6 +432,7 @@ func putObject(ctx context.Context, rc io.ReadCloser, Bucket, Key string, opts *
 		obj:       obj,
 		objOutput: out,
 		objError:  err,
+		mu:        &sync.Mutex{},
 	}
 
 	if err == nil {

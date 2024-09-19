@@ -65,21 +65,28 @@ func main() {
 
 	// setup result handler
 	completed := make(chan *UploadResults)
+	inflight := &sync.WaitGroup{}
 	reporting := &sync.WaitGroup{}
 
+	var t0 time.Time
+	var t1 time.Time
+	var nbytes int64
+	var ncompleted int
+	var naborted int
+
 	reporting.Add(1)
-	go func(ch chan *UploadResults, reporting *sync.WaitGroup) {
+	go func(completed chan *UploadResults, reporting *sync.WaitGroup) {
 		defer reporting.Done()
 
 		manifest := Manifest(opts.Manifest, os.Stdout)
 		defer manifest.End()
 
-		for res := range ch {
+		for res := range completed {
 			if res.Error != nil {
 				log.Printf("error uploading object %s/%s: %s", res.Bucket, res.Key, res.Error)
-
 			} else {
 				if opts.Verbose {
+					t1 = time.Now()
 					log.Printf("completed uploading object %s/%s", res.Bucket, res.Key)
 				}
 
@@ -91,9 +98,36 @@ func main() {
 					if err != nil {
 						log.Printf("error writing manifest: %s", err)
 					}
+
+					if opts.Verbose {
+						if obj.Aborted {
+							naborted += 1
+						}
+
+						if obj.Completed &&
+							obj.ObjectAttributes != nil &&
+							obj.ObjectAttributes.ObjectParts != nil {
+							ncompleted += 1
+							for _, part := range obj.ObjectAttributes.ObjectParts.Parts {
+								nbytes += *part.Size
+							}
+						}
+					}
 				}
 			}
 		}
+
+		if opts.Verbose {
+			GiB := float64(1024 * 1024 * 1024)
+
+			log.Printf("%d completed, %d failed, %s bytes in %s (%.3f GiB/s)",
+				ncompleted,
+				naborted,
+				ByteSize(nbytes),
+				t1.Sub(t0).Truncate(time.Millisecond),
+				((float64(nbytes) / GiB) / float64(t1.Sub(t0)/time.Second)))
+		}
+
 	}(completed, reporting)
 
 	// start processing file globs for objects to upload
@@ -103,14 +137,22 @@ func main() {
 		log.Fatal(err)
 	}
 
+	t0 = time.Now()
+
 	for obj := range to_upload {
+		inflight.Add(1)
 		uploaded := uploader.Upload(ctx, obj.rc, obj.bucket, obj.key)
 		go func(rc io.ReadCloser, uploaded, completed chan *UploadResults) {
+			defer inflight.Done()
 			defer rc.Close()
 			res := <-uploaded
 			completed <- res
 		}(obj.rc, uploaded, completed)
 	}
+	go func() {
+		inflight.Wait()
+		close(completed)
+	}()
 
 	// wait until uploader has completed (or been canceled)
 	uploader.Wait(zeroTimeout)
@@ -152,6 +194,5 @@ func main() {
 	}
 
 	// wait until reporting has completed
-	close(completed)
 	reporting.Wait()
 }
