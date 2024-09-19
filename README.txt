@@ -18,7 +18,8 @@ DESCRIPTION
     local tools such as md5 or sha256sum.
 
     s3up takes one or more options, detailed in the OPTIONS section below.
-    The only required options is -bucket.
+    The only required option is -bucket if processing files, otherwise
+    the -key option is also required when processing a stream.
 
     The -key option may be left unspecified, in which case the filepath
     name will be used, set to a prefix (ending in a slash ("/")) in which
@@ -225,11 +226,11 @@ MANIFESTS
     		"Completed": true,
     		"Aborted": false,
     		"FullChecksums": {
-    		"ChecksumMD5": {
-    			"Hex": "77faeaf43e9e70ec067f7927d3e53424",
-    			"Base64": "d/rq9D6ecOwGf3kn0+U0JA=="
-    		},
-    		"ChecksumSHA256": {
+    			"ChecksumMD5": {
+    				"Hex": "77faeaf43e9e70ec067f7927d3e53424",
+    				"Base64": "d/rq9D6ecOwGf3kn0+U0JA=="
+    			},
+    			"ChecksumSHA256": {
     				"Hex": "a8c8f8906df45d5311bdcb7168541f960d8c8fcda6c12e144e7d1240405dc9cb",
     				"Base64": "qMj4kG30XVMRvctxaFQflg2Mj82mwS4UTn0SQEBdycs="
     			}
