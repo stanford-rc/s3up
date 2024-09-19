@@ -86,7 +86,7 @@ func (hp *HashParts) SumOfSums() HashSum {
 // time partSize bytes are written to the current part.  It never returns an
 // error.
 func (hp *HashParts) Write(buf []byte) (int, error) {
-	// if hp.p is not set, allocate a new HashPart and add it's hash to the
+	// if hp.p is not set, allocate a new HashPart and add its hash to the
 	// hp.h slice
 	if hp.p == nil {
 		hp.p = &HashPart{
@@ -101,7 +101,7 @@ func (hp *HashParts) Write(buf []byte) (int, error) {
 
 	for len(buf) > 0 {
 		// if hp.p was reset to nil after the last write, allocate a
-		// new HashPart and add it's hash to the hp.h slice
+		// new HashPart and add its hash to the hp.h slice
 		if hp.p == nil {
 			hp.p = &HashPart{
 				n: 0,
