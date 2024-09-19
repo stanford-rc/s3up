@@ -21,17 +21,17 @@ DESCRIPTION
     The only required option is -bucket if processing files, otherwise
     the -key option is also required when processing a stream.
 
-    The -key option may be left unspecified, in which case the filepath
-    name will be used, set to a prefix (ending in a slash ("/")) in which
-    case the prefix will be prepended to filepath names, or set to
-    non-prefix value in which case the filepath name will be replaced with
-    the specified -key name.
+    When processing files the -key option may be left unspecified, in which
+    case the filepath name will be used, set to a prefix (ending in a slash
+    ("/")) in which case the prefix will be prepended to filepath names, or
+    set to non-prefix value in which case the filepath name will be
+    replaced with the specified -key name.
 
     As its final arguments s3up takes one or more file glob patterns for
     files to upload.  A glob can be a full filename or valid glob pattern,
     e.g., '*.pdf', to match against a list of files.  Alternatively if no
-    globs are provided then s3up will read from standard input, in which
-    case a non-prefix -key name is required.
+    globs are provided then s3up will read from the standard input stream,
+    in which case a non-prefix -key name is required.
 
 OPTIONS
 
