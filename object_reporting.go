@@ -240,6 +240,10 @@ type ObjectAttributes struct {
 }
 
 func NewObjectAttributes(hr *S3Hasher, p *s3.GetObjectAttributesOutput) (*ObjectAttributes, error) {
+	if p == nil {
+		return nil, fmt.Errorf("nil GetObjectAttributesOutput")
+	}
+
 	checksum, err := NewObjectChecksums(p.Checksum)
 	if err != nil {
 		return nil, err
