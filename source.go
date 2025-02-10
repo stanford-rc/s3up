@@ -191,8 +191,9 @@ func (p *tempfSource) Next() (*SourceReader, error) {
 		n, err := lr.Read(chunk)
 
 		if n > 0 {
-			fh.Write(chunk[0:n])
-			size += int64(n)
+			var nw int
+			nw, err = fh.Write(chunk[0:n])
+			size += int64(nw)
 		}
 
 		if err != nil {
