@@ -71,6 +71,10 @@ func NewObjectReporting(st *S3UploadState) (*ObjectReporting, error) {
 				st.hr.ChecksumAlgorithm(), st.hr.SumOfSums())
 		}
 
+		if st.objectAttributesError != nil {
+			return nil, st.objectAttributesError
+		}
+
 		objAttributes, err = NewObjectAttributes(st.hr, st.objectAttributesOutput)
 		if err != nil {
 			return nil, err
