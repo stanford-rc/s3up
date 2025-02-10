@@ -143,8 +143,11 @@ func main() {
 		inflight.Add(1)
 		uploaded := uploader.Upload(ctx, obj.rc, obj.bucket, obj.key)
 		go func(rc io.ReadCloser, uploaded, completed chan *UploadResults) {
-			defer inflight.Done()
-			defer rc.Close()
+			defer func() {
+				inflight.Done()
+				rc.Close()
+			}()
+
 			res := <-uploaded
 			completed <- res
 		}(obj.rc, uploaded, completed)

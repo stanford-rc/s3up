@@ -271,7 +271,10 @@ func (p *Uploader) upload(ctx context.Context, r io.Reader, Bucket, Key string) 
 	// SourceReader and/or error
 	var peeked func() (*SourceReader, error)
 
+	part_inflight := make(chan bool, p.opts.ConcurrentParts)
 	for {
+		part_inflight <- true
+
 		var sr *SourceReader
 		var err error
 
@@ -381,6 +384,7 @@ func (p *Uploader) upload(ctx context.Context, r io.Reader, Bucket, Key string) 
 		go func(errch chan error, sr *SourceReader) {
 			<-errch
 			sr.Close()
+			<-part_inflight
 		}(errch, sr)
 	}
 
