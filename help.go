@@ -283,5 +283,24 @@ MANIFESTS
 			"AbortMultipartUploadError": "<error>",
 			"GetObjectAttributesError": "<error>"
 		}
+
+BUILD
+
+	To build s3up you will need to have a version of Go installed.
+	Currently s3up is being compiled with 1.23.2.  Clone the s3up
+	repository and run "go build" to compile for your machine:
+
+	    $ git clone https://github.com/stanford-rc/s3up
+
+	    $ cd s3up
+
+	    $ go build
+
+	    $ ls -l s3up
+	    -rwxr-xr-x. 1 jimr jimr 13343453 Feb 19 11:02 s3up
+
+	Optionally set GOOS and GOARCH environment variables to cross compile to
+	different targets.  Run "go tool dist list" to see a list of the valid
+	combinations of GOOS and GOARCH.
 */
 package main
