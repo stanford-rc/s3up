@@ -33,6 +33,10 @@ type Options struct {
 	// Optionally enable verbose logging
 	Verbose bool
 
+	// If keys contain bytes that are not UTF8, escape them using
+	// percent-encoding
+	EncodeKey bool
+
 	// Optionally specify a tab-separated file listing filepath extensions
 	// and IANA media types to register in the process
 	MediaTypes string

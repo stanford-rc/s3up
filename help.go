@@ -51,6 +51,13 @@ OPTIONS
 		files.  If no <globs> are specified then a non-prefix -key is
 		required.
 
+	-encode-key
+
+		Optionally percent-encode portions of a key that is not valid
+		UTF-8 or that are control characters.  If not set then keys
+		that are not valid UTF-8 or that contain control characters
+		will be rejected.
+
 	-part-size value
 
 		Optionally specify the size of parts to upload.

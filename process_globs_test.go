@@ -286,7 +286,7 @@ func TestProcessGlobs(t *testing.T) {
 			}
 		}
 
-		ch, err := processGlobs(tst.globs, tst.bucket, tst.key, tst.recursive, false)
+		ch, err := processGlobs(tst.globs, tst.bucket, tst.key, tst.recursive, false, true)
 		tst.expect(tstDir, ch, err)
 	}
 }

@@ -41,6 +41,9 @@ func processFlags(ctx context.Context, args []string) (*Options, error) {
 	flags.BoolVar(&opts.Verbose, "verbose", false,
 		"optionally enable verbose logging to standard error")
 
+	flags.BoolVar(&opts.EncodeKey, "encode-key", false,
+		"optionally percent-encode bytes in Key that are not valid UTF-8 non-control characters")
+
 	flags.StringVar(&opts.MediaTypes, "media-types", "",
 		"optionally specify a path to a TSV listing extension to media-type mappings")
 

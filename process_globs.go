@@ -17,7 +17,7 @@ var ErrMultiUploadKey = errors.New(
 
 // processGlobs processes Options.globs, returning each source file via the
 // returned channel.
-func processGlobs(globs []string, Bucket, Key string, recursive, verbose bool) (chan *uploadObject, error) {
+func processGlobs(globs []string, Bucket, Key string, recursive, verbose, encodeKey bool) (chan *uploadObject, error) {
 	ch := make(chan *uploadObject)
 
 	// if globs is empty then assume we want to read from standard input
@@ -30,6 +30,12 @@ func processGlobs(globs []string, Bucket, Key string, recursive, verbose bool) (
 			close(ch)
 			return nil, fmt.Errorf(
 				"uploading from standard input requires a -key name, not a prefix: %s", Key)
+		}
+
+		if k, err := S3Key(Key, encodeKey); err != nil {
+			return nil, err
+		} else {
+			Key = k
 		}
 
 		if verbose {
@@ -115,6 +121,13 @@ func processGlobs(globs []string, Bucket, Key string, recursive, verbose bool) (
 
 					nqueued += 1
 
+					if k, err := S3Key(currentKey, encodeKey); err != nil {
+						log.Printf("cannot process path %s: %s", match, err)
+						continue
+					} else {
+						currentKey = k
+					}
+
 					ch <- &uploadObject{
 						bucket: Bucket,
 						key:    currentKey,
@@ -186,6 +199,12 @@ func processGlobs(globs []string, Bucket, Key string, recursive, verbose bool) (
 
 						if nqueued > 1 && Key != "" && !strings.HasSuffix(Key, "/") {
 							return ErrMultiUploadKey
+						}
+
+						if k, err := S3Key(currentKey, encodeKey); err != nil {
+							return err
+						} else {
+							currentKey = k
 						}
 
 						// submit upload source

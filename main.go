@@ -132,7 +132,7 @@ func main() {
 
 	// start processing file globs for objects to upload
 	to_upload, err := processGlobs(
-		opts.globs, opts.bucket, opts.key, opts.Recursive, opts.Verbose)
+		opts.globs, opts.bucket, opts.key, opts.Recursive, opts.Verbose, opts.EncodeKey)
 	if err != nil {
 		log.Fatal(err)
 	}
