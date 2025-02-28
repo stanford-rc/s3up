@@ -10,11 +10,11 @@ import (
 // upper limit on the length of key
 var MAX_KEY_BYTES = 1024
 
-// S3Key checks key to ensure it is valid UTF-8 without control characters.  If
-// encode is set to true then any invalid UTF-8 bytes or control characters
-// will be percent-encoded.  If encode is set to false an either invalid UTF-8
-// or control characters are present then the original key and an error will be
-// returned.
+// S3Key checks key to ensure it is composed of valid UTF-8 bytes without
+// control characters.  If encode is set to true then any invalid UTF-8 bytes
+// or any control characters will be percent-encoded.  If encode is set to
+// false and either invalid UTF-8 bytes or control characters are present then
+// the original key and an error will be returned.
 func S3Key(key string, encode bool) (string, error) {
 	if !encode && !utf8.ValidString(key) {
 		return key, fmt.Errorf(
