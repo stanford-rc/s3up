@@ -30,6 +30,8 @@ func S3Key(key string, encode bool) (string, error) {
 			break
 		}
 
+		// for each valid rune add it to x and advance p to the next
+		// byte
 		r, w := utf8.DecodeRune(p)
 		if r != utf8.RuneError && w != 0 && !unicode.IsControl(r) {
 			x = utf8.AppendRune(x, r)
@@ -41,20 +43,29 @@ func S3Key(key string, encode bool) (string, error) {
 		// added to x when we search for the next valid UTF-8 character
 		xn := len(x)
 
-		// search p for the next valid rune, if any
+		// search p for the next valid rune, if any. If there are
+		// sequences of invalid UTF-8 bytes or control characters
+		// between p[0] and the next valid rune, they will be
+		// percent-encoded and added to x.
 		for i := 0; i < len(p); i++ {
 			r, w = utf8.DecodeRune(p[i:])
 			if r != utf8.RuneError && w != 0 && !unicode.IsControl(r) {
+				// percent encode the invalid bytes
 				pct := url.PathEscape(string(p[0:i]))
 				x = append(x, []byte(pct)...)
+
+				// add the valid rune we found
 				x = utf8.AppendRune(x, r)
+
+				// advance p to the next byte after the rune
 				p = p[i+w:]
 				break
 			}
 		}
 
-		// if no more valid runes were found, encode the rest of the
-		// key
+		// if x has not changed in size since xn was recorded then no
+		// more valid runes were found and we can encode the rest of
+		// the key
 		if xn == len(x) {
 			pct := url.PathEscape(string(p))
 			x = append(x, []byte(pct)...)
