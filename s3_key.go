@@ -73,14 +73,16 @@ func S3Key(key string, encode bool) (string, error) {
 		}
 	}
 
-	if !encode && string(x) != key {
+	// convert x to a string
+	xk := string(x)
+
+	// if encoding was not requested and xk is not the same as k then the
+	// key contained problematic characters
+	if !encode && xk != key {
 		return key, fmt.Errorf(
 			"key contained control characters and percent-encoding was not requested: %s",
 			string(x))
 	}
-
-	// convert k to a string
-	xk := string(x)
 
 	// check for valid key length
 	if len(x) > MAX_KEY_BYTES {
